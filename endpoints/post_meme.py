@@ -9,5 +9,5 @@ class CreateMeme(Endpoint):
 
     @allure.step('Create a new meme')
     def new_meme(self, payload):
-        response = requests.post(f"{self.url}/meme", headers=self.headers, json=payload)
+        response = self.session.post(f"{self.url}/meme", json=payload)
         return response

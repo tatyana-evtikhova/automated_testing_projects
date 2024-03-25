@@ -8,12 +8,10 @@ from endpoints.get_all_memes import GetAllMemes
 from endpoints.endpoint import Endpoint
 
 
-@pytest.fixture(scope="session")
-def api_session():
-    session = requests.Session()
-    token = "Oljr2Ttv2MUJlbh"
-    session.headers.update({"Authorization": token})
-    return session
+@pytest.fixture(scope='session')
+def api_client():
+    Endpoint.init_session()
+    return Endpoint
 
 
 @pytest.fixture()

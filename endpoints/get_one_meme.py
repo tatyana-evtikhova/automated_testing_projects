@@ -8,8 +8,6 @@ class GetOneMeme(Endpoint):
 
     @allure.step('Get one meme by its ID')
     def get_meme(self, meme_id):
-        self.response = requests.get(
-            f'{self.url}/meme/{meme_id}',
-            headers=self.headers)
+        self.response = self.session.get(
+            f'{self.url}/meme/{meme_id}')
         return self.response
-

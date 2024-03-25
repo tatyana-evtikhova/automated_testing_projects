@@ -11,13 +11,13 @@ payload = {
 }
 
 
-def test_get_all_memes(get_all_memes_endpoint, api_session):
+def test_get_all_memes(api_client, get_all_memes_endpoint):
     response = get_all_memes_endpoint.get_all_memes()
     get_all_memes_endpoint.check_status_is_200(response)
     get_all_memes_endpoint.check_response_dict(response)
 
 
-def test_get_one_meme(get_meme_endpoint, api_session, meme_id):
+def test_get_one_meme(get_meme_endpoint, api_client, meme_id):
     response = get_meme_endpoint.get_meme(meme_id)
     get_meme_endpoint.check_status_is_200(response)
     data = response.json()
@@ -26,7 +26,7 @@ def test_get_one_meme(get_meme_endpoint, api_session, meme_id):
     get_meme_endpoint.check_meme_text(data, expected_text)
 
 
-def test_create_meme(create_meme_endpoint):
+def test_create_meme(create_meme_endpoint, api_client):
     response = create_meme_endpoint.new_meme(payload)
     create_meme_endpoint.check_status_is_200(response)
     data = response.json()
@@ -35,13 +35,13 @@ def test_create_meme(create_meme_endpoint):
     create_meme_endpoint.check_meme_text(data, expected_text)
 
 
-def test_edit_meme(edit_meme_endpoint, meme_id, editable_meme):
+def test_edit_meme(edit_meme_endpoint, meme_id, editable_meme, api_client):
     response = edit_meme_endpoint.edit_meme(meme_id, editable_meme)
     edit_meme_endpoint.check_status_is_200(response)
     data = response.json()
     edit_meme_endpoint.check_meme_text(data, editable_meme['text'])
 
 
-def test_delete_meme(delete_meme_endpoint, meme_id):
+def test_delete_meme(delete_meme_endpoint, meme_id, api_client):
     response = delete_meme_endpoint.delete_meme_by_id(meme_id)
     delete_meme_endpoint.check_meme_is_deleted(response)

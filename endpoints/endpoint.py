@@ -1,13 +1,38 @@
 import allure
 import requests
 
+# Это ваш endpoint.py
+import requests
+
 
 class Endpoint:
     url = 'http://167.172.172.115:52355'
-    response = None
-    json = None
-    token = "Oljr2Ttv2MUJlbh"
-    headers = {"Authorization": token}
+    session = None
+    token = None
+
+    @classmethod
+    def init_session(cls):
+        if cls.session is None:
+            cls.session = requests.Session()
+            cls.ensure_token_valid()
+
+    @classmethod
+    def get_new_token(cls):
+        response = requests.post(f'{cls.url}/authorize', json={"name": "Tatyana"})
+        cls.token = response.json().get('token')
+        cls.session.headers.update({"Authorization": cls.token})
+
+    @classmethod
+    def is_token_valid(cls):
+        if cls.token is None:
+            return False
+        response = cls.session.get(f'{cls.url}/authorize/{cls.token}')
+        return response.status_code == 200
+
+    @classmethod
+    def ensure_token_valid(cls):
+        if not cls.is_token_valid():
+            cls.get_new_token()
 
     @allure.step('Check that response is 200')
     def check_status_is_200(self, response):
@@ -15,7 +40,7 @@ class Endpoint:
 
     @allure.step('Check that meme is deleted')
     def check_meme_is_deleted(self, response):
-        assert response.status_code == 200, f"Expected status 400, got {response.status_code}"
+        assert response.status_code == 400, f"Expected status 400, got {response.status_code}"
 
     @allure.step('Check that list is given in response')
     def check_response_dict(self, response):
@@ -28,4 +53,3 @@ class Endpoint:
     @allure.step('Check that meme text is equal to expected')
     def check_meme_text(self, data, expected_text):
         assert data['text'] == expected_text, f"Expected meme text '{expected_text}', got '{data['text']}'"
-
