@@ -2,6 +2,7 @@ import requests
 import allure
 
 from endpoints.endpoint import Endpoint
+from authorize import Authorize
 
 
 class GetAllMemes(Endpoint):

@@ -14,3 +14,4 @@ class DeleteMeme(Endpoint):
     @allure.step('Check that meme is deleted')
     def check_meme_is_deleted(self, meme_id):
         check_response = self.session.get(f'{self.url}/meme/{meme_id}')
+        assert check_response.status_code == 404, f"Meme with ID {meme_id} still exists"

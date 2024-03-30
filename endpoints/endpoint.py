@@ -1,46 +1,35 @@
 import allure
 import requests
-
-# Это ваш endpoint.py
-import requests
+from authorize import Authorize
 
 
-class Endpoint:
+class Endpoint(Authorize):
     url = 'http://167.172.172.115:52355'
     session = None
     token = None
 
-    @classmethod
-    def init_session(cls):
-        if cls.session is None:
-            cls.session = requests.Session()
-            cls.ensure_token_valid()
-
-    @classmethod
-    def get_new_token(cls):
-        response = requests.post(f'{cls.url}/authorize', json={"name": "Tatyana"})
-        cls.token = response.json().get('token')
-        cls.session.headers.update({"Authorization": cls.token})
-
-    @classmethod
-    def is_token_valid(cls):
-        if cls.token is None:
-            return False
-        response = cls.session.get(f'{cls.url}/authorize/{cls.token}')
-        return response.status_code == 200
-
-    @classmethod
-    def ensure_token_valid(cls):
-        if not cls.is_token_valid():
-            cls.get_new_token()
+    def init_session(self):
+        self.ensure_token_valid()
 
     @allure.step('Check that response is 200')
     def check_status_is_200(self, response):
         assert response.status_code == 200, f"Expected status 200, got {response.status_code}"
 
-    @allure.step('Check that meme is deleted')
-    def check_meme_is_deleted(self, response):
+    @allure.step('Check that response is 401')
+    def check_status_is_401(self, response):
+        assert response.status_code == 401, f"Expected status 401, got {response.status_code}"
+
+    @allure.step('Check that response is 400 Bad Request')
+    def check_status_is_400(self, response):
         assert response.status_code == 400, f"Expected status 400, got {response.status_code}"
+
+    @allure.step('Check that response is 404 Not Found')
+    def check_status_is_404(self, response):
+        assert response.status_code == 404, f"Expected status 404, got {response.status_code}"
+
+    @allure.step('Check that response is 403 Forbidden')
+    def check_status_is_403(self, response):
+        assert response.status_code == 404, f"Expected status 403, got {response.status_code}"
 
     @allure.step('Check that list is given in response')
     def check_response_dict(self, response):
