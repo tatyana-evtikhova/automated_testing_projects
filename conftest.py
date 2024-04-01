@@ -5,12 +5,6 @@ from endpoints.edit_meme import EditMeme
 from endpoints.delete_meme import DeleteMeme
 from endpoints.get_one_meme import GetOneMeme
 from endpoints.get_all_memes import GetAllMemes
-from endpoints.unauthorized_get_meme import UnauthorizedGetMeme
-from endpoints.unauthorized_get_all_memes import UnauthorizedGetAllMemes
-from endpoints.unauthorized_create_meme import UnauthorizedCreateMeme
-from endpoints.unauthorized_edit_meme import UnauthorizedEditMeme
-from endpoints.unauthorized_delete_meme import UnauthorizedDeleteMeme
-from endpoints.create_meme_by_another_user import CreateMemeAsMascot
 from authorize import Authorize
 from endpoints.check_token import CheckToken
 from endpoints.endpoint import Endpoint
@@ -39,23 +33,8 @@ def create_meme_endpoint():
 
 
 @pytest.fixture()
-def create_meme_as_mascot_endpoint():
-    return CreateMemeAsMascot()
-
-
-@pytest.fixture()
-def unauthorized_create_meme_endpoint():
-    return UnauthorizedCreateMeme()
-
-
-@pytest.fixture()
 def edit_meme_endpoint():
     return EditMeme()
-
-
-@pytest.fixture()
-def unauthorized_edit_meme_endpoint():
-    return UnauthorizedEditMeme()
 
 
 @pytest.fixture()
@@ -64,28 +43,13 @@ def delete_meme_endpoint():
 
 
 @pytest.fixture()
-def unauthorized_delete_meme_endpoint():
-    return UnauthorizedDeleteMeme()
-
-
-@pytest.fixture()
 def get_meme_endpoint():
     return GetOneMeme()
 
 
 @pytest.fixture()
-def unauthorized_get_meme_endpoint():
-    return UnauthorizedGetMeme()
-
-
-@pytest.fixture()
 def get_all_memes_endpoint():
     return GetAllMemes()
-
-
-@pytest.fixture()
-def unauthorized_get_all_memes_endpoint():
-    return UnauthorizedGetAllMemes()
 
 
 @pytest.fixture()
@@ -119,28 +83,3 @@ def editable_meme(meme_id):
         }
     }
     return test_data
-
-
-@pytest.fixture
-def negative_payload(request):
-    payloads = [
-        {
-            "text": "testing meme",
-            "url": "https://blog.domotz.com/wp-content/uploads/2023/12/IMG_0196-828x1024.jpg",
-            "tags": ["IT", "meme", "software tester"],
-            "info": ["white", "brown", "grey", "picture", "text"]
-        },
-        {
-            "text": "testing meme",
-            "url": "https://blog.domotz.com/wp-content/uploads/2023/12/IMG_0196-828x1024.jpg",
-            "tags": ["IT", "meme", "software tester"],
-            "info": ["white", "brown", "grey", "picture", "text"]
-        },
-        {
-            "text": "testing meme",
-            "url": "https://blog.domotz.com/wp-content/uploads/2023/12/IMG_0196-828x1024.jpg",
-            "tags": ["IT", "meme", "software tester"],
-            "info": ["white", "brown", "grey", "picture", "text"]
-        },
-    ]
-    return request.param
