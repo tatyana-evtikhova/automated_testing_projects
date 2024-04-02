@@ -5,13 +5,26 @@ from endpoints.edit_meme import EditMeme
 from endpoints.delete_meme import DeleteMeme
 from endpoints.get_one_meme import GetOneMeme
 from endpoints.get_all_memes import GetAllMemes
+from authorize import Authorize
+from endpoints.check_token import CheckToken
 from endpoints.endpoint import Endpoint
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='session', autouse=True)
 def api_client():
-    Endpoint.init_session()
-    return Endpoint
+    endpoint = Endpoint()
+    endpoint.init_session()
+    return endpoint
+
+
+@pytest.fixture()
+def authorize_endpoint():
+    return Authorize()
+
+
+@pytest.fixture()
+def check_token_endpoint():
+    return CheckToken()
 
 
 @pytest.fixture()
