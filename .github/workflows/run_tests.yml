@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   run-tests:
-    runs-on: ubuntu_latest
+    runs-on: ubuntu-latest
     name: Run API autotests
     steps:
       - name: Checkout autotests
