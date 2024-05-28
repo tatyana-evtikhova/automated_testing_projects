@@ -1,6 +1,18 @@
 name: Python autotests
 
-on: [push]
+on:
+  workflow_dispatch:
+    inputs:
+      deployment_target:
+        description: choose tests set
+        required: true
+        type: choice
+        default: all
+        options:
+          - smoke
+          - regression
+          - extended
+          - all
 
 jobs:
   run-tests:
@@ -15,5 +27,15 @@ jobs:
           python-version: "3.10"
       - name: Install dependencies
         run: pip install -r requirements.txt
-      - name: Run tests
+      - name: Run all tests
+        if: "github.event.inputs.deployment_target == 'all'"
         run: pytest
+      - name: Run smoke tests
+        if: "github.event.inputs.deployment_target == 'smoke'"
+        run: pytest -m smoke
+      - name: Run regression tests
+        if: "github.event.inputs.deployment_target == 'regression'"
+        run: pytest -m regression
+      - name: Run extended tests
+        if: "github.event.inputs.deployment_target == 'extended'"
+        run: pytest -m extended
