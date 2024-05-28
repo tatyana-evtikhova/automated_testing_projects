@@ -60,7 +60,7 @@ jobs:
           sudo ln -s /opt/allure-2.24.1/bin/allure /usr/bin/allure
       - name: Generate Allure Report
         run: |
-          allure generate ./allure-results --clean -o _site
+          allure generate ./allure-results --clean ./allure-report
       - name: Upload Allure Report as artifact
         uses: actions/upload-artifact@v3
         with:
@@ -72,10 +72,16 @@ jobs:
     runs-on: ubuntu-latest
     needs: run-tests
     steps:
-      - name: Download artifacts
+      - name: Download artifact
         uses: actions/download-artifact@v4
+        with:
+          name: allure-report
+          path: ./allure-report
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v1
+        with:
+          name: github-pages
+          path: ./allure-report
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v1
