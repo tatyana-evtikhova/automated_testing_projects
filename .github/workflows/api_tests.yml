@@ -66,6 +66,7 @@ jobs:
   run-tests:
     runs-on: ubuntu-latest
     name: Run autotests
+    needs: download-history
     steps:
       - name: Checkout autotests
         uses: actions/checkout@v4
