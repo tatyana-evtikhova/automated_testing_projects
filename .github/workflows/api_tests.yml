@@ -46,6 +46,10 @@ jobs:
           -H "X-GitHub-Api-Version: 2022-11-28" \
           https://api.github.com/repos/tatyana-evtikhova/automated_testing_projects/actions/artifacts/$SITE_ARTIFACT_ID/zip \
           -o site_artifacts.zip
+          if ! file site_artifacts.zip | grep -q 'Zip archive data'; then
+              echo "Error: Downloaded file is not a valid zip archive"
+              exit 1
+          fi
       - name: Download GitHub Pages artifact
         run: |
           PAGES_ARTIFACT_RESPONSE=$(curl -L -H "Accept: application/vnd.github+json" \
@@ -63,10 +67,30 @@ jobs:
               -H "X-GitHub-Api-Version: 2022-11-28" \
               https://api.github.com/repos/tatyana-evtikhova/automated_testing_projects/actions/artifacts/$PAGES_ARTIFACT_ID/zip \
               -o pages_artifacts.zip
+              if ! file pages_artifacts.zip | grep -q 'Zip archive data'; then
+                  echo "Warning: Downloaded GitHub Pages file is not a valid zip archive"
+              fi
           fi
-      - run: mkdir -p allure-results && unzip site_artifacts.zip -d allure-results
-      - run: mkdir -p old_pages pages_history && [ -f pages_artifacts.zip ] && unzip pages_artifacts.zip -d old_pages && tar -xvf old_pages/artifact.tar -C pages_history || echo "No pages_artifacts.zip to unzip"
-      - run: cp pages_history/history/* allure-results && cp -r pages_history/history allure-results || echo "No history to copy"
+      - name: Extract site artifacts
+        run: |
+          mkdir -p allure-results
+          unzip site_artifacts.zip -d allure-results || { echo "Unzip failed for site_artifacts.zip"; exit 1; }
+      - name: Extract GitHub Pages artifacts
+        run: |
+          mkdir -p old_pages pages_history
+          if [ -f pages_artifacts.zip ]; then
+              unzip pages_artifacts.zip -d old_pages || { echo "Unzip failed for pages_artifacts.zip"; exit 1; }
+              tar -xvf old_pages/artifact.tar -C pages_history
+          else
+              echo "No pages_artifacts.zip to unzip"
+          fi
+      - name: Copy history
+        run: |
+          if [ -d pages_history/history ]; then
+              cp pages_history/history/* allure-results && cp -r pages_history/history allure-results
+          else
+              echo "No history to copy"
+          fi
       - name: Store allure history
         uses: actions/upload-artifact@v3
         with:
@@ -134,3 +158,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1.2.9
+
